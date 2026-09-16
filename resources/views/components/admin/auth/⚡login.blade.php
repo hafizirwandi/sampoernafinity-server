@@ -19,7 +19,7 @@ class extends Component
 
     public bool $remember = false;
 
-    public function login(): void
+    public function authenticate(): void
     {
         $data = $this->validate([
             'login' => ['required', 'string'],
@@ -67,7 +67,7 @@ class extends Component
     <h2 class="mt-3 text-xl font-semibold">Masuk ke Admin</h2>
     <p class="mt-1 text-sm text-text-muted">Khusus untuk staf pengelola platform.</p>
 
-    <form wire:submit="login" class="mt-6 space-y-4">
+    <form wire:submit="authenticate" class="mt-6 space-y-4">
         <div>
             <label for="login" class="mb-1.5 block text-sm font-medium">Email atau Username</label>
             <input
@@ -96,11 +96,11 @@ class extends Component
         <button
             type="submit"
             wire:loading.attr="disabled"
-            wire:target="login"
+            wire:target="authenticate"
             class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-            <span wire:loading.remove wire:target="login">Masuk</span>
-            <span wire:loading wire:target="login" class="inline-flex items-center gap-2">
+            <span wire:loading.remove wire:target="authenticate">Masuk</span>
+            <span wire:loading wire:target="authenticate" class="inline-flex items-center gap-2">
                 <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
