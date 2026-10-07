@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolePermissionSeeder::class);
         $this->call(FeatureSeeder::class);
+        $this->call(GiftSeeder::class);
 
         // Extra dummy users so the Pengguna list has something to paginate/search in local dev.
         User::factory(15)->create();

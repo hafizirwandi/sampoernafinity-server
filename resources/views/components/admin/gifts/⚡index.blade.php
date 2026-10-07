@@ -7,13 +7,21 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 new
 #[Layout('layouts.admin', ['heading' => 'TikTok Gift & Stiker'])]
 #[Title('TikTok Gift & Stiker')]
 class extends Component
 {
+    use WithPagination;
+
     public string $type = 'gift';
+
+    public string $search = '';
+
+    // Either "all", "uncategorized", or a gift_category_id.
+    public string $categoryFilter = 'all';
 
     // --- Gift/sticker item modal ---
     public bool $showModal = false;
@@ -42,25 +50,41 @@ class extends Component
     public function with(): array
     {
         return [
+            'gifts' => Gift::query()
+                ->where('type', $this->type)
+                ->when($this->search !== '', fn ($query) => $query
+                    ->where(fn ($q) => $q
+                        ->where('name', 'like', "%{$this->search}%")
+                        ->orWhere('tiktok_id', 'like', "%{$this->search}%")))
+                ->when($this->categoryFilter === 'uncategorized', fn ($query) => $query->whereNull('gift_category_id'))
+                ->when(is_numeric($this->categoryFilter), fn ($query) => $query->where('gift_category_id', $this->categoryFilter))
+                ->orderBy('name')
+                ->paginate(24),
             'categories' => GiftCategory::query()
                 ->where('type', $this->type)
                 ->withCount('gifts')
-                ->with(['gifts' => fn ($q) => $q->orderBy('name')])
                 ->orderBy('sort_order')
-                ->orderBy('name')
-                ->get(),
-            'uncategorized' => Gift::query()
-                ->where('type', $this->type)
-                ->whereNull('gift_category_id')
                 ->orderBy('name')
                 ->get(),
             'typeLabels' => GiftCategory::TYPES,
         ];
     }
 
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingCategoryFilter(): void
+    {
+        $this->resetPage();
+    }
+
     public function setType(string $type): void
     {
         $this->type = $type === 'sticker' ? 'sticker' : 'gift';
+        $this->categoryFilter = 'all';
+        $this->resetPage();
     }
 
     // --- Gift/sticker item CRUD ---
@@ -232,83 +256,54 @@ class extends Component
         </div>
     </div>
 
-    <div class="space-y-6">
-        @forelse ($categories as $category)
-            <div>
-                <div class="mb-2 flex items-center justify-between">
-                    <h3 class="text-sm font-semibold">{{ $category->name }}</h3>
-                    <span class="text-xs text-text-muted">{{ $category->gifts_count }} item</span>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-sm text-text-muted">{{ $gifts->total() }} {{ strtolower($typeLabels[$type]) }}</p>
+
+        <div class="flex flex-col gap-2 sm:flex-row sm:w-auto">
+            <select
+                wire:model.live="categoryFilter"
+                class="rounded-lg border border-border bg-bg px-3 py-2 text-sm text-text focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600 sm:w-52"
+            >
+                <option value="all">Semua kategori</option>
+                <option value="uncategorized">Tanpa kategori</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }} ({{ $category->gifts_count }})</option>
+                @endforeach
+            </select>
+
+            <x-ui.search-input model="search" placeholder="Cari nama atau TikTok ID..." class="sm:w-64" />
+        </div>
+    </div>
+
+    <div wire:loading.class="opacity-50" wire:target="search,categoryFilter,setType,previousPage,nextPage" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        @forelse ($gifts as $gift)
+            <div class="flex flex-col items-center gap-2 rounded-2xl border border-border bg-surface p-4 text-center">
+                <img src="{{ $gift->image_url }}" alt="{{ $gift->name }}" class="h-14 w-14 rounded-lg object-contain" loading="lazy">
+                <p class="line-clamp-2 text-sm font-medium">{{ $gift->name }}</p>
+                <p class="text-xs font-medium text-yellow-600">{{ number_format($gift->coin) }} Coin</p>
+                <p class="text-xs text-text-muted">ID: {{ $gift->tiktok_id }}</p>
+
+                <div class="mt-1 flex gap-1.5">
+                    <button wire:click="edit({{ $gift->id }})" class="rounded-lg border border-border p-1.5 text-text-muted hover:bg-surface-alt hover:text-text">
+                        <x-heroicon-o-pencil-square class="h-4 w-4" />
+                    </button>
+                    <button
+                        x-data
+                        x-on:click="confirm('Hapus {{ $typeLabels[$type] }} {{ $gift->name }}?') && $wire.delete({{ $gift->id }})"
+                        class="rounded-lg border border-border p-1.5 text-text-muted hover:bg-primary-50 hover:text-primary-600"
+                    >
+                        <x-heroicon-o-trash class="h-4 w-4" />
+                    </button>
                 </div>
-
-                @if ($category->gifts->isEmpty())
-                    <div class="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-text-muted">
-                        Belum ada item di kategori ini.
-                    </div>
-                @else
-                    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                        @foreach ($category->gifts as $gift)
-                            <div class="flex flex-col items-center gap-2 rounded-2xl border border-border bg-surface p-4 text-center">
-                                <img src="{{ $gift->image_url }}" alt="{{ $gift->name }}" class="h-14 w-14 rounded-lg object-contain" loading="lazy">
-                                <p class="line-clamp-2 text-sm font-medium">{{ $gift->name }}</p>
-                                <p class="text-xs font-medium text-yellow-600">{{ number_format($gift->coin) }} Coin</p>
-                                <p class="text-xs text-text-muted">ID: {{ $gift->tiktok_id }}</p>
-
-                                <div class="mt-1 flex gap-1.5">
-                                    <button wire:click="edit({{ $gift->id }})" class="rounded-lg border border-border p-1.5 text-text-muted hover:bg-surface-alt hover:text-text">
-                                        <x-heroicon-o-pencil-square class="h-4 w-4" />
-                                    </button>
-                                    <button
-                                        x-data
-                                        x-on:click="confirm('Hapus {{ $typeLabels[$type] }} {{ $gift->name }}?') && $wire.delete({{ $gift->id }})"
-                                        class="rounded-lg border border-border p-1.5 text-text-muted hover:bg-primary-50 hover:text-primary-600"
-                                    >
-                                        <x-heroicon-o-trash class="h-4 w-4" />
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
             </div>
         @empty
-            <div class="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-text-muted">
-                Belum ada kategori {{ strtolower($typeLabels[$type]) }}. Buat kategori dulu lewat "Kelola Kategori".
+            <div class="col-span-full rounded-2xl border border-dashed border-border p-8 text-center text-sm text-text-muted">
+                Tidak ada {{ strtolower($typeLabels[$type]) }} yang cocok.
             </div>
         @endforelse
-
-        @if ($uncategorized->isNotEmpty())
-            <div>
-                <div class="mb-2 flex items-center justify-between">
-                    <h3 class="text-sm font-semibold">Tanpa Kategori</h3>
-                    <span class="text-xs text-text-muted">{{ $uncategorized->count() }} item</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                    @foreach ($uncategorized as $gift)
-                        <div class="flex flex-col items-center gap-2 rounded-2xl border border-border bg-surface p-4 text-center">
-                            <img src="{{ $gift->image_url }}" alt="{{ $gift->name }}" class="h-14 w-14 rounded-lg object-contain" loading="lazy">
-                            <p class="line-clamp-2 text-sm font-medium">{{ $gift->name }}</p>
-                            <p class="text-xs font-medium text-yellow-600">{{ number_format($gift->coin) }} Coin</p>
-                            <p class="text-xs text-text-muted">ID: {{ $gift->tiktok_id }}</p>
-
-                            <div class="mt-1 flex gap-1.5">
-                                <button wire:click="edit({{ $gift->id }})" class="rounded-lg border border-border p-1.5 text-text-muted hover:bg-surface-alt hover:text-text">
-                                    <x-heroicon-o-pencil-square class="h-4 w-4" />
-                                </button>
-                                <button
-                                    x-data
-                                    x-on:click="confirm('Hapus {{ $typeLabels[$type] }} {{ $gift->name }}?') && $wire.delete({{ $gift->id }})"
-                                    class="rounded-lg border border-border p-1.5 text-text-muted hover:bg-primary-50 hover:text-primary-600"
-                                >
-                                    <x-heroicon-o-trash class="h-4 w-4" />
-                                </button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endif
     </div>
+
+    {{ $gifts->links('components.ui.pagination') }}
 
     {{-- Create/edit gift item modal --}}
     @if ($showModal)
