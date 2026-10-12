@@ -47,9 +47,7 @@
                 </div>
 
                 <button type="button" x-on:click="mobileOpen = !mobileOpen" class="inline-flex items-center justify-center rounded-lg p-2 text-text-muted hover:bg-surface-alt md:hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-6 w-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-                    </svg>
+                    <x-heroicon-o-bars-3 class="h-6 w-6" />
                 </button>
             </div>
 
@@ -77,7 +75,8 @@
             <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:py-28">
                 <div>
                     <span class="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
-                        🔴 Toolkit trigger &amp; action untuk live TikTok
+                        <x-heroicon-o-signal class="h-3.5 w-3.5" />
+                        Toolkit trigger &amp; action untuk live TikTok
                     </span>
 
                     <h1 class="mt-5 text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
@@ -96,9 +95,7 @@
 
                     <div class="mt-8 flex flex-col gap-3 sm:flex-row">
                         <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-900/10 hover:bg-primary-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                            </svg>
+                            <x-heroicon-o-arrow-down-tray class="h-4 w-4" />
                             Download Aplikasi
                         </a>
                         <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-5 py-3 text-sm font-semibold text-text hover:bg-surface">
@@ -128,11 +125,13 @@
                         </div>
                     </div>
 
-                    <div class="absolute -right-3 -top-4 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-medium shadow-lg sm:-right-6">
-                        ✅ Overlay aktif!
+                    <div class="absolute -right-3 -top-4 flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-medium shadow-lg sm:-right-6">
+                        <x-heroicon-o-check-circle class="h-4 w-4 text-emerald-600" />
+                        Overlay aktif!
                     </div>
-                    <div class="absolute -bottom-4 -left-3 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-medium shadow-lg sm:-left-6">
-                        🎮 Trigger gift diterima
+                    <div class="absolute -bottom-4 -left-3 flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-medium shadow-lg sm:-left-6">
+                        <x-heroicon-o-gift class="h-4 w-4 text-primary-600" />
+                        Trigger gift diterima
                     </div>
                 </div>
             </div>
@@ -176,14 +175,14 @@
 
             <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div class="rounded-2xl bg-primary-600 p-6 text-white sm:col-span-2">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-lg">💬</div>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><x-heroicon-o-chat-bubble-left-right class="h-5 w-5" /></div>
                     <h3 class="mt-4 text-lg font-semibold">Overlay Live TikTok</h3>
                     <p class="mt-1 text-sm text-white/85">Tampilkan overlay interaktif langsung saat live TikTok berjalan, temanya bisa disesuaikan lewat admin.</p>
                 </div>
 
                 <div class="relative rounded-2xl border border-border bg-surface p-6">
                     <span class="absolute right-4 top-4 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">Segera</span>
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-lg">🔊</div>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-primary-600"><x-heroicon-o-speaker-wave class="h-5 w-5" /></div>
                     <h3 class="mt-4 text-sm font-semibold">Soundboard Otomatis</h3>
                     <p class="mt-1 text-sm text-text-muted">Putar efek suara otomatis begitu trigger tertentu terjadi, misalnya gift atau komentar spesifik.</p>
                 </div>
@@ -194,19 +193,19 @@
                 </div>
 
                 <div class="rounded-2xl border border-border bg-surface p-6">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-lg">🎁</div>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-primary-600"><x-heroicon-o-gift class="h-5 w-5" /></div>
                     <h3 class="mt-4 text-sm font-semibold">Gift Value Mapping</h3>
                     <p class="mt-1 text-sm text-text-muted">Atur reaksi berbeda berdasarkan jenis dan nilai gift yang diterima.</p>
                 </div>
 
                 <div class="rounded-2xl border border-border bg-surface p-6">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-lg">✨</div>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-primary-600"><x-heroicon-o-sparkles class="h-5 w-5" /></div>
                     <h3 class="mt-4 text-sm font-semibold">Custom Trigger &amp; Action</h3>
                     <p class="mt-1 text-sm text-text-muted">Buat kombinasi trigger dan action sendiri sesuai kebutuhan live kamu.</p>
                 </div>
 
                 <div class="rounded-2xl border border-border bg-surface p-6">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-lg">🔗</div>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-primary-600"><x-heroicon-o-link class="h-5 w-5" /></div>
                     <h3 class="mt-4 text-sm font-semibold">Integrasi Platform Donasi</h3>
                     <p class="mt-1 text-sm text-text-muted">Direncanakan terhubung dengan Saweria, Trakteer, dan platform donasi populer lainnya.</p>
                 </div>
@@ -214,7 +213,8 @@
                 <div class="flex flex-col justify-between rounded-2xl bg-zinc-950 p-6 text-white sm:col-span-2 lg:col-span-1">
                     <p class="text-sm text-white/70">Trigger &amp; action terus bertambah tiap update.</p>
                     <a href="#harga" class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-400 hover:text-primary-300">
-                        Lihat roadmap fitur →
+                        Lihat roadmap fitur
+                        <x-heroicon-o-arrow-right class="h-4 w-4" />
                     </a>
                 </div>
             </div>
@@ -230,17 +230,20 @@
 
                 <div class="mx-auto mt-10 max-w-2xl space-y-8">
                     @foreach ([
-                        ['icon' => '⬇️', 'title' => 'Download atau Buka via Web', 'desc' => 'Unduh aplikasi desktop untuk Windows, atau langsung gunakan versi web tanpa perlu install.'],
-                        ['icon' => '🔌', 'title' => 'Hubungkan Akun TikTok', 'desc' => 'Sambungkan username TikTok live kamu ke dashboard admin.'],
-                        ['icon' => '⚙️', 'title' => 'Atur Trigger & Action', 'desc' => 'Pilih trigger yang mau diaktifkan, lalu tentukan overlay atau suara yang muncul.'],
-                        ['icon' => '▶️', 'title' => 'Mulai Live', 'desc' => 'Trigger berjalan otomatis secara realtime begitu live TikTok kamu dimulai.'],
+                        ['icon' => 'heroicon-o-arrow-down-tray', 'title' => 'Download atau Buka via Web', 'desc' => 'Unduh aplikasi desktop untuk Windows, atau langsung gunakan versi web tanpa perlu install.'],
+                        ['icon' => 'heroicon-o-link', 'title' => 'Hubungkan Akun TikTok', 'desc' => 'Sambungkan username TikTok live kamu ke dashboard admin.'],
+                        ['icon' => 'heroicon-o-cog-6-tooth', 'title' => 'Atur Trigger & Action', 'desc' => 'Pilih trigger yang mau diaktifkan, lalu tentukan overlay atau suara yang muncul.'],
+                        ['icon' => 'heroicon-o-play', 'title' => 'Mulai Live', 'desc' => 'Trigger berjalan otomatis secara realtime begitu live TikTok kamu dimulai.'],
                     ] as $i => $step)
                         <div class="flex gap-4 rounded-2xl border border-border bg-surface p-5">
                             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-sm font-bold text-white">
                                 {{ $i + 1 }}
                             </div>
                             <div>
-                                <p class="font-semibold">{{ $step['icon'] }} {{ $step['title'] }}</p>
+                                <p class="flex items-center gap-2 font-semibold">
+                                    <x-dynamic-component :component="$step['icon']" class="h-5 w-5 text-primary-600" />
+                                    {{ $step['title'] }}
+                                </p>
                                 <p class="mt-1 text-sm text-text-muted">{{ $step['desc'] }}</p>
                             </div>
                         </div>
@@ -305,9 +308,7 @@
                         <div x-data="{ open: false }" class="rounded-xl border border-border bg-surface">
                             <button type="button" x-on:click="open = !open" class="flex w-full items-center justify-between px-4 py-3.5 text-left text-sm font-medium">
                                 {{ $item['q'] }}
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0 transition-transform" :class="open && 'rotate-45'">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
+                                <x-heroicon-o-plus class="h-4 w-4 shrink-0 transition-transform" x-bind:class="open && 'rotate-45'" />
                             </button>
                             <div x-show="open" x-transition style="display: none;" class="px-4 pb-4 text-sm text-text-muted">
                                 {{ $item['a'] }}
