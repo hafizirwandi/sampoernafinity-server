@@ -145,6 +145,7 @@ class extends Component
                                 <span x-text="redirecting === 'google' ? 'Mengarahkan...' : 'Lanjutkan dengan Google'"></span>
                             </a>
 
+                            {{-- Discord login is hidden for now; remove this comment to bring it back.
                             <a
                                 href="{{ route('social.redirect', 'discord') }}"
                                 x-on:click="redirecting = 'discord'"
@@ -160,6 +161,7 @@ class extends Component
                                 </svg>
                                 <span x-text="redirecting === 'discord' ? 'Mengarahkan...' : 'Lanjutkan dengan Discord'"></span>
                             </a>
+                            --}}
                         </div>
 
                         <div class="my-6 flex items-center gap-3">
