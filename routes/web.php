@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\DesktopDownloadController;
 use App\Http\Middleware\RedirectIfAdmin;
 use App\Http\Middleware\RedirectIfNotAdmin;
 use Illuminate\Http\Request;
@@ -8,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'landing')->name('landing');
+
+// Desktop app downloads. /download/windows always points at the newest
+// installer listed in public/downloads/desktop/latest.yml.
+Route::redirect('/download', '/#download')->name('download');
+Route::get('/download/windows', [DesktopDownloadController::class, 'windows'])->name('download.windows');
 
 // Customer-facing area: creators log in here to see their own dashboard,
 // active packages, and the manual book. Admin/staff accounts are redirected

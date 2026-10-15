@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureDesktopVersionSupported;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
+
+        // Outdated desktop builds get a 426 on every API call (except the
+        // version check itself) so they can't hit endpoints that changed.
+        $middleware->api(prepend: [EnsureDesktopVersionSupported::class]);
 
         // Keep the admin area and the customer area on separate login pages.
         // Guests are routed by which area they tried to reach...

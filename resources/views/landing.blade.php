@@ -32,6 +32,7 @@
                 <nav class="hidden items-center gap-8 text-sm font-medium text-text-muted md:flex">
                     <a href="#fitur" class="hover:text-text">Fitur</a>
                     <a href="#cara-kerja" class="hover:text-text">Cara Kerja</a>
+                    <a href="#download" class="hover:text-text">Download</a>
                     <a href="#harga" class="hover:text-text">Harga</a>
                     <a href="#faq" class="hover:text-text">FAQ</a>
                 </nav>
@@ -54,6 +55,7 @@
             <div x-show="mobileOpen" x-transition style="display: none;" class="space-y-1 border-t border-border bg-surface px-4 py-3 md:hidden">
                 <a href="#fitur" class="block rounded-lg px-3 py-2 text-sm font-medium text-text-muted hover:bg-surface-alt hover:text-text">Fitur</a>
                 <a href="#cara-kerja" class="block rounded-lg px-3 py-2 text-sm font-medium text-text-muted hover:bg-surface-alt hover:text-text">Cara Kerja</a>
+                <a href="#download" class="block rounded-lg px-3 py-2 text-sm font-medium text-text-muted hover:bg-surface-alt hover:text-text">Download</a>
                 <a href="#harga" class="block rounded-lg px-3 py-2 text-sm font-medium text-text-muted hover:bg-surface-alt hover:text-text">Harga</a>
                 <a href="#faq" class="block rounded-lg px-3 py-2 text-sm font-medium text-text-muted hover:bg-surface-alt hover:text-text">FAQ</a>
                 <div class="my-2 border-t border-border"></div>
@@ -94,7 +96,7 @@
                     </p>
 
                     <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-900/10 hover:bg-primary-700">
+                        <a href="#download" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-900/10 hover:bg-primary-700">
                             <x-heroicon-o-arrow-down-tray class="h-4 w-4" />
                             Download Aplikasi
                         </a>
@@ -255,6 +257,79 @@
                     <a href="#fitur" class="inline-flex items-center justify-center rounded-lg border border-border px-5 py-3 text-sm font-semibold text-text hover:bg-surface">Pelajari Fitur</a>
                 </div>
             </div>
+        </section>
+
+        {{-- Download --}}
+        @php
+            $desktopRelease = \App\Support\DesktopRelease::latest();
+            $platformIcons = ['windows' => 'heroicon-o-computer-desktop', 'macos' => 'heroicon-o-computer-desktop', 'linux' => 'heroicon-o-command-line'];
+        @endphp
+        <section id="download" class="mx-auto max-w-6xl scroll-mt-16 px-4 py-16 sm:px-6 sm:py-24">
+            <div class="text-center">
+                <span class="text-xs font-semibold uppercase tracking-wide text-primary-600">Download</span>
+                <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Pasang aplikasi <span class="text-primary-600">desktop</span></h2>
+                <p class="mt-2 text-sm text-text-muted">Aplikasi akan memperbarui dirinya sendiri setiap ada versi baru, jadi cukup download sekali.</p>
+            </div>
+
+            @if (session('download_status'))
+                <div class="mx-auto mt-6 max-w-xl rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-800">
+                    {{ session('download_status') }}
+                </div>
+            @endif
+
+            <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+                @foreach (config('desktop.platforms') as $key => $platform)
+                    @php $ready = $platform['available'] && ($key !== 'windows' || $desktopRelease); @endphp
+                    <div @class([
+                        'relative flex flex-col rounded-2xl border p-6',
+                        'border-primary-200 bg-surface shadow-lg shadow-primary-900/5' => $ready,
+                        'border-border bg-surface-alt' => ! $ready,
+                    ])>
+                        @unless ($ready)
+                            <span class="absolute right-4 top-4 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                                {{ $platform['available'] ? 'Segera' : 'Coming Soon' }}
+                            </span>
+                        @endunless
+
+                        <div @class([
+                            'flex h-10 w-10 items-center justify-center rounded-xl',
+                            'bg-primary-600 text-white' => $ready,
+                            'bg-surface text-text-muted' => ! $ready,
+                        ])>
+                            <x-dynamic-component :component="$platformIcons[$key] ?? 'heroicon-o-computer-desktop'" class="h-5 w-5" />
+                        </div>
+
+                        <h3 class="mt-4 text-base font-semibold">{{ $platform['label'] }}</h3>
+                        <p class="mt-1 text-xs text-text-muted">{{ $platform['requirement'] }}</p>
+
+                        @if ($ready && $key === 'windows')
+                            <p class="mt-3 text-xs text-text-muted">
+                                Versi {{ $desktopRelease['version'] }}
+                                @if ($desktopRelease['size'])
+                                    &middot; {{ number_format($desktopRelease['size'] / 1048576, 1) }} MB
+                                @endif
+                            </p>
+                        @endif
+
+                        <div class="mt-auto pt-6">
+                            @if ($ready)
+                                <a href="{{ route('download.'.$key) }}" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">
+                                    <x-heroicon-o-arrow-down-tray class="h-4 w-4" />
+                                    Download untuk {{ $platform['label'] }}
+                                </a>
+                            @else
+                                <span class="inline-flex w-full cursor-not-allowed items-center justify-center rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-text-muted">
+                                    {{ $platform['available'] ? 'Installer sedang disiapkan' : 'Segera hadir' }}
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <p class="mt-6 text-center text-xs text-text-muted">
+                Windows mungkin menampilkan peringatan SmartScreen saat pertama kali dijalankan &mdash; klik <span class="font-medium">More info &rarr; Run anyway</span>.
+            </p>
         </section>
 
         {{-- Pricing --}}
